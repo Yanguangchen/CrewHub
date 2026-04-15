@@ -1,9 +1,9 @@
 /**
  * POST /api/logout — clears the worker HttpOnly session cookie.
  */
-import { COOKIE } from "./lib/sessionCookie.js";
+import { COOKIE } from "../sessionCookie.js";
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

@@ -1,13 +1,11 @@
 /**
  * POST /api/login
- * Body: { employeeId, pin }
- * Verifies PIN in Firestore `worker_credentials/{normalizedId}`; `workerName` comes from the roster doc (admin-managed).
  */
 import { FieldValue } from "firebase-admin/firestore";
-import { getDb } from "./lib/firebaseAdmin.js";
-import { signWorkerSession, setWorkerCookie } from "./lib/sessionCookie.js";
-import { verifyPin, hashPin } from "./lib/pinHash.js";
-import { clientIp, isLoginBlocked, registerLoginFailure, clearLoginFailures } from "./lib/loginRateLimit.js";
+import { getDb } from "../firebaseAdmin.js";
+import { signWorkerSession, setWorkerCookie } from "../sessionCookie.js";
+import { verifyPin, hashPin } from "../pinHash.js";
+import { clientIp, isLoginBlocked, registerLoginFailure, clearLoginFailures } from "../loginRateLimit.js";
 
 const COL = "worker_credentials";
 
@@ -31,7 +29,7 @@ function normEmployeeId(id) {
     .slice(0, 128);
 }
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

@@ -1,16 +1,13 @@
 /**
  * POST /api/driver-claim
- * JSON body: destination, mileage, receiptBase64, receiptMime, receiptName, meterBase64, meterMime, meterName
- * Requires HttpOnly worker session cookie. Uploads via Admin SDK (works with Vercel’s JSON body parsing).
  */
 import { randomUUID } from "node:crypto";
 import { Timestamp } from "firebase-admin/firestore";
-import { getDb } from "./lib/firebaseAdmin.js";
-import { saveClaimObject } from "./lib/claimStorage.js";
-import { verifyWorkerSession, parseCookieHeader, COOKIE } from "./lib/sessionCookie.js";
+import { getDb } from "../firebaseAdmin.js";
+import { saveClaimObject } from "../claimStorage.js";
+import { verifyWorkerSession, parseCookieHeader, COOKIE } from "../sessionCookie.js";
 
 const COL_CLAIMS = "fleet_claims";
-/** Keep total JSON under Vercel’s ~4.5 MB body limit (base64 expands ~4/3). */
 const MAX_IMAGE_BYTES = Math.floor(1.55 * 1024 * 1024);
 
 function parseBody(req) {
@@ -49,7 +46,7 @@ function decodeImageB64(label, b64, mime) {
   return buf;
 }
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

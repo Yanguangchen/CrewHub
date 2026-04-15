@@ -1,15 +1,12 @@
 /**
  * GET /api/timesheet-open?siteName=&date=YYYY-MM-DD
- * Cookie session: returns today’s open timesheet for this worker + site, or null.
- *
- * Firestore composite index: add `timesheets`: fields `date` ASC, `workerName` ASC (Console link on first query error).
  */
-import { getDb } from "./lib/firebaseAdmin.js";
-import { getWorkerSession } from "./lib/timesheetSession.js";
+import { getDb } from "../firebaseAdmin.js";
+import { getWorkerSession } from "../timesheetSession.js";
 
 const COL = "timesheets";
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });

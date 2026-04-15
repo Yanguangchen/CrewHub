@@ -1,14 +1,13 @@
 /**
  * POST /api/timesheet-admin-delete  Body: { timesheetId }
- * Authorization: Bearer Google ID token. Primary / ADMIN_UIDS only.
  */
-import { getDb } from "./lib/firebaseAdmin.js";
-import { requireAdminFromRequest } from "./lib/adminAuth.js";
-import { parseJsonBody } from "./lib/parseJsonBody.js";
+import { getDb } from "../firebaseAdmin.js";
+import { requireAdminFromRequest } from "../adminAuth.js";
+import { parseJsonBody } from "../parseJsonBody.js";
 
 const COL = "timesheets";
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

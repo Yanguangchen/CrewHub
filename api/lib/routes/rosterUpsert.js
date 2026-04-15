@@ -1,13 +1,10 @@
 /**
  * POST /api/roster-upsert
- * Authorization: Bearer <Firebase ID token> (email must be listed in ADMIN_EMAILS)
- * Body: { employeeId, workerName, pin }
- * Creates or updates `worker_credentials` (admin-only; workers cannot self-register via UI).
  */
 import { FieldValue } from "firebase-admin/firestore";
-import { getDb } from "./lib/firebaseAdmin.js";
-import { requireAdminFromRequest } from "./lib/adminAuth.js";
-import { hashPin } from "./lib/pinHash.js";
+import { getDb } from "../firebaseAdmin.js";
+import { requireAdminFromRequest } from "../adminAuth.js";
+import { hashPin } from "../pinHash.js";
 
 const COL = "worker_credentials";
 
@@ -31,7 +28,7 @@ function normEmployeeId(id) {
     .slice(0, 128);
 }
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

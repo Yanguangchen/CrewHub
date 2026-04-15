@@ -1,12 +1,9 @@
 /**
  * POST /api/clock-in
- * Body: { siteName, date? }
- * Requires HttpOnly `crewhub_worker` cookie. Worker name comes from the session (set at login).
- * No GPS / location fields.
  */
 import { Timestamp } from "firebase-admin/firestore";
-import { getDb } from "./lib/firebaseAdmin.js";
-import { verifyWorkerSession, parseCookieHeader, COOKIE } from "./lib/sessionCookie.js";
+import { getDb } from "../firebaseAdmin.js";
+import { verifyWorkerSession, parseCookieHeader, COOKIE } from "../sessionCookie.js";
 
 const COL_TIMESHEETS = "timesheets";
 
@@ -31,7 +28,7 @@ function todayDateString() {
   return `${y}-${m}-${day}`;
 }
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });

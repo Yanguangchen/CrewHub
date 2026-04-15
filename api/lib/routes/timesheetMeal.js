@@ -1,13 +1,13 @@
 /**
  * POST /api/timesheet-meal  Body: { timesheetId, claimedMeal }
  */
-import { getDb } from "./lib/firebaseAdmin.js";
-import { getWorkerSession, timesheetBelongsToWorker } from "./lib/timesheetSession.js";
-import { parseJsonBody } from "./lib/parseJsonBody.js";
+import { getDb } from "../firebaseAdmin.js";
+import { getWorkerSession, timesheetBelongsToWorker } from "../timesheetSession.js";
+import { parseJsonBody } from "../parseJsonBody.js";
 
 const COL = "timesheets";
 
-export default async function handler(req, res) {
+export async function handle(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
