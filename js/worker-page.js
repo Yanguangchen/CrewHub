@@ -8,7 +8,7 @@ import {
   updateTimesheetMealClaim,
   deleteOpenTimesheet,
   findOpenTimesheetForDay,
-} from "./timesheets-crud.js";
+} from "./timesheets-worker.js";
 import { postLogin, postClockIn, postLogout, getSession } from "./api-worker.js";
 
 const COOLDOWN_MS = 15 * 60 * 1000;

@@ -1,6 +1,6 @@
 import {
   auth,
-  db,
+  getDb,
   collection,
   onSnapshot,
   query,
@@ -114,7 +114,7 @@ function startAdminListeners() {
   if (adminListenersStarted || !isConfigReady()) return;
   unsubTimesheets = subscribeTimesheets(renderTimesheets, (err) => console.error("timesheets listener", err));
 
-  const cq = query(collection(db, COL_CLAIMS), orderBy("timestamp", "desc"));
+  const cq = query(collection(getDb(), COL_CLAIMS), orderBy("timestamp", "desc"));
   unsubClaims = onSnapshot(cq, renderClaims, (err) => console.error("claims listener", err));
   adminListenersStarted = true;
 }

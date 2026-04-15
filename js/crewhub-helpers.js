@@ -9,7 +9,13 @@ export function formatDateKey(d) {
 
 export function formatTs(ts) {
   if (!ts) return "—";
-  const d = ts instanceof Timestamp ? ts.toDate() : ts;
+  let d;
+  if (ts instanceof Timestamp) d = ts.toDate();
+  else if (typeof ts.toDate === "function") d = ts.toDate();
+  else if (typeof ts.seconds === "number") d = new Date(ts.seconds * 1000);
+  else if (typeof ts._seconds === "number") d = new Date(ts._seconds * 1000);
+  else if (ts instanceof Date) d = ts;
+  else return "—";
   return d.toLocaleString();
 }
 

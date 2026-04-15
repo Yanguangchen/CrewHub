@@ -35,7 +35,14 @@ export const app = initializeApp(firebaseConfig);
 export const analyticsPromise = isSupported().then((ok) => (ok ? getAnalytics(app) : null));
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+/** Lazy so worker/driver pages never open a Firestore channel (rules deny non-owner reads). */
+let _db;
+export function getDb() {
+  if (!_db) _db = getFirestore(app);
+  return _db;
+}
+
 export const storage = getStorage(app);
 
 export {
