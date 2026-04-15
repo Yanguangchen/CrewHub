@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Primary admin (Firebase Auth UID). Full admin privileges for this repo:
+     * - Read/write `worker_credentials` from trusted clients (admin roster tab).
+     * - Same `timesheets` / `fleet_claims` access as any signed-in user (dashboard).
+     * Sync with `CREWHUB_PRIMARY_ADMIN_UID` in js/admin-owner.js and api/lib/adminAuth.js.
+     */
+    function isCrewOwner() {
+      return request.auth != null
+        && request.auth.uid == 'aWzsqY6sT5SjVjMI1jJHs5rOddw1';
+    }
+
+    /**
+     * Timesheets: any signed-in user (including Anonymous Auth used by workers).
+     */
+    match /timesheets/{id} {
+      allow read, write: if request.auth != null;
+    }
+
+    /** Diesel claims: authenticated users only. */
+    match /fleet_claims/{id} {
+      allow read, write: if request.auth != null;
+    }
+
+    /**
+     * Roster credentials: only primary admin UID from the browser; Admin SDK bypasses rules.
+     */
+    match /worker_credentials/{id} {
+      allow read, write: if isCrewOwner();
+    }
+  }
+}

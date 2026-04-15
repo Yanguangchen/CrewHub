@@ -1,0 +1,225 @@
+/**
+ * Initial view: fade + rise for shell and content. Theme dialog: enter when opened.
+ * prefers-reduced-motion: disable below.
+ */
+:root {
+  --crewhub-enter-ease: var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  --crewhub-enter-dur: 0.55s;
+  --crewhub-enter-dur-sm: 0.44s;
+}
+
+@keyframes crewhub-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes crewhub-enter-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Subtle motion only (avoids stacking opacity with parent panels) */
+@keyframes crewhub-enter-nudge {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes crewhub-dialog-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ——— Header ——— */
+.app-header {
+  animation: crewhub-enter-up var(--crewhub-enter-dur) var(--crewhub-enter-ease) both;
+  animation-delay: 0.05s;
+}
+
+/* ——— Main column (status, panels, messages, bars…) ——— */
+.app-main > * {
+  animation: crewhub-enter-up var(--crewhub-enter-dur) var(--crewhub-enter-ease) both;
+}
+
+.app-main > *:nth-child(1) {
+  animation-delay: 0.08s;
+}
+.app-main > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.app-main > *:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.app-main > *:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.app-main > *:nth-child(5) {
+  animation-delay: 0.24s;
+}
+.app-main > *:nth-child(6) {
+  animation-delay: 0.28s;
+}
+.app-main > *:nth-child(7) {
+  animation-delay: 0.32s;
+}
+.app-main > *:nth-child(8) {
+  animation-delay: 0.36s;
+}
+.app-main > *:nth-child(9) {
+  animation-delay: 0.4s;
+}
+.app-main > *:nth-child(10) {
+  animation-delay: 0.44s;
+}
+.app-main > *:nth-child(11) {
+  animation-delay: 0.48s;
+}
+.app-main > *:nth-child(12) {
+  animation-delay: 0.52s;
+}
+.app-main > *:nth-child(13) {
+  animation-delay: 0.56s;
+}
+.app-main > *:nth-child(14) {
+  animation-delay: 0.6s;
+}
+.app-main > *:nth-child(15) {
+  animation-delay: 0.64s;
+}
+.app-main > *:nth-child(16) {
+  animation-delay: 0.68s;
+}
+.app-main > *:nth-child(17) {
+  animation-delay: 0.72s;
+}
+.app-main > *:nth-child(18) {
+  animation-delay: 0.76s;
+}
+
+/* ——— Inside glass panels: staggered nudge (titles, fields, buttons, tables…) ——— */
+.app-main .view.glass.panel > * {
+  animation: crewhub-enter-nudge var(--crewhub-enter-dur-sm) var(--crewhub-enter-ease) both;
+}
+
+.app-main .view.glass.panel > *:nth-child(1) {
+  animation-delay: 0.14s;
+}
+.app-main .view.glass.panel > *:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.app-main .view.glass.panel > *:nth-child(3) {
+  animation-delay: 0.22s;
+}
+.app-main .view.glass.panel > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
+.app-main .view.glass.panel > *:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.app-main .view.glass.panel > *:nth-child(6) {
+  animation-delay: 0.34s;
+}
+.app-main .view.glass.panel > *:nth-child(7) {
+  animation-delay: 0.38s;
+}
+.app-main .view.glass.panel > *:nth-child(8) {
+  animation-delay: 0.42s;
+}
+.app-main .view.glass.panel > *:nth-child(9) {
+  animation-delay: 0.46s;
+}
+.app-main .view.glass.panel > *:nth-child(10) {
+  animation-delay: 0.5s;
+}
+.app-main .view.glass.panel > *:nth-child(11) {
+  animation-delay: 0.54s;
+}
+.app-main .view.glass.panel > *:nth-child(12) {
+  animation-delay: 0.58s;
+}
+.app-main .view.glass.panel > *:nth-child(13) {
+  animation-delay: 0.62s;
+}
+.app-main .view.glass.panel > *:nth-child(14) {
+  animation-delay: 0.66s;
+}
+.app-main .view.glass.panel > *:nth-child(15) {
+  animation-delay: 0.7s;
+}
+.app-main .view.glass.panel > *:nth-child(16) {
+  animation-delay: 0.74s;
+}
+.app-main .view.glass.panel > *:nth-child(17) {
+  animation-delay: 0.78s;
+}
+.app-main .view.glass.panel > *:nth-child(18) {
+  animation-delay: 0.82s;
+}
+.app-main .view.glass.panel > *:nth-child(19) {
+  animation-delay: 0.86s;
+}
+.app-main .view.glass.panel > *:nth-child(20) {
+  animation-delay: 0.9s;
+}
+
+/* ——— Theme dialog (opens after load) ——— */
+.theme-dialog[open]::backdrop {
+  animation: crewhub-enter-fade 0.32s ease both;
+}
+
+.theme-dialog[open] .theme-dialog-surface {
+  animation: crewhub-dialog-pop 0.42s var(--crewhub-enter-ease) both;
+}
+
+.theme-dialog[open] .theme-dialog-surface > * {
+  animation: crewhub-enter-nudge 0.38s var(--crewhub-enter-ease) both;
+}
+
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(1) {
+  animation-delay: 0.06s;
+}
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(3) {
+  animation-delay: 0.14s;
+}
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(4) {
+  animation-delay: 0.18s;
+}
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(5) {
+  animation-delay: 0.22s;
+}
+.theme-dialog[open] .theme-dialog-surface > *:nth-child(6) {
+  animation-delay: 0.26s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header,
+  .app-main > *,
+  .app-main .view.glass.panel > *,
+  .theme-dialog[open]::backdrop,
+  .theme-dialog[open] .theme-dialog-surface,
+  .theme-dialog[open] .theme-dialog-surface > * {
+    animation: none !important;
+  }
+}

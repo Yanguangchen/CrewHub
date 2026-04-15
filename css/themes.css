@@ -1,0 +1,109 @@
+/**
+ * CrewHub themes: ocean, midnight, orange.
+ * Set on <html data-theme="…">. Glass rgba alphas control panel translucency.
+ */
+
+html {
+  color-scheme: dark;
+  --glass-blur: 16px;
+  --glass-saturate: 1.05;
+  --shadow-deep: 0 22px 60px rgba(0, 0, 0, 0.55);
+  --hover-lift: translateY(-4px) scale(1.02);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ——— Midnight (cool slate / indigo) ——— */
+html[data-theme="midnight"] {
+  --text: #f1f5ff;
+  --muted: rgba(226, 232, 255, 0.62);
+  --glass-bg: rgba(4, 6, 14, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-inner-bg: rgba(0, 0, 0, 0.46);
+  --input-bg: rgba(0, 0, 0, 0.43);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --focus-ring: rgba(165, 180, 252, 0.22);
+  --accent: #a5b4fc;
+  --accent-2: #38bdf8;
+  --glow-soft: rgba(165, 180, 252, 0.14);
+  --glow-strong: rgba(129, 140, 248, 0.22);
+  --btn-primary-text: #070a12;
+  --btn-primary-from: #c4b5fd;
+  --btn-primary-to: #38bdf8;
+  --btn-primary-glow: rgba(56, 189, 248, 0.2);
+  --nav-active-bg: rgba(165, 180, 252, 0.14);
+  --bg-shift-1: #05060d;
+  --bg-shift-2: #0b1020;
+  --bg-shift-3: #121a33;
+  --bg-shift-4: #1a1030;
+  --orb-1: rgba(129, 140, 248, 0.28);
+  --orb-2: rgba(56, 189, 248, 0.22);
+  --orb-3: rgba(167, 139, 250, 0.18);
+  --orb-blend: screen;
+  --link-border: rgba(165, 180, 252, 0.5);
+  --link-bg: rgba(165, 180, 252, 0.1);
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+}
+
+/* ——— Ocean (teal / cyan) ——— */
+html[data-theme="ocean"] {
+  --text: #ecfeff;
+  --muted: rgba(207, 250, 254, 0.65);
+  --glass-bg: rgba(3, 12, 18, 0.68);
+  --glass-border: rgba(165, 243, 252, 0.12);
+  --glass-inner-bg: rgba(0, 12, 20, 0.49);
+  --input-bg: rgba(0, 18, 28, 0.46);
+  --input-border: rgba(103, 232, 249, 0.14);
+  --focus-ring: rgba(34, 211, 238, 0.2);
+  --accent: #22d3ee;
+  --accent-2: #06b6d4;
+  --glow-soft: rgba(34, 211, 238, 0.14);
+  --glow-strong: rgba(6, 182, 212, 0.22);
+  --btn-primary-text: #021014;
+  --btn-primary-from: #5eead4;
+  --btn-primary-to: #0ea5e9;
+  --btn-primary-glow: rgba(14, 165, 233, 0.2);
+  --nav-active-bg: rgba(34, 211, 238, 0.12);
+  --bg-shift-1: #020c14;
+  --bg-shift-2: #042f3e;
+  --bg-shift-3: #0c4a6e;
+  --bg-shift-4: #082f49;
+  --orb-1: rgba(34, 211, 238, 0.26);
+  --orb-2: rgba(14, 165, 233, 0.2);
+  --orb-3: rgba(45, 212, 191, 0.18);
+  --orb-blend: screen;
+  --link-border: rgba(34, 211, 238, 0.55);
+  --link-bg: rgba(34, 211, 238, 0.1);
+  --table-row-hover: rgba(255, 255, 255, 0.055);
+}
+
+/* ——— Orange (ember / amber) ——— */
+html[data-theme="orange"] {
+  --text: #fff7ed;
+  --muted: rgba(255, 237, 213, 0.68);
+  --glass-bg: rgba(12, 6, 4, 0.7);
+  --glass-border: rgba(253, 186, 116, 0.14);
+  --glass-inner-bg: rgba(18, 8, 4, 0.52);
+  --input-bg: rgba(22, 10, 4, 0.49);
+  --input-border: rgba(253, 186, 116, 0.14);
+  --focus-ring: rgba(251, 191, 36, 0.2);
+  --accent: #fb923c;
+  --accent-2: #f97316;
+  --glow-soft: rgba(251, 146, 60, 0.14);
+  --glow-strong: rgba(249, 115, 22, 0.22);
+  --btn-primary-text: #160802;
+  --btn-primary-from: #fcd34d;
+  --btn-primary-to: #fb923c;
+  --btn-primary-glow: rgba(251, 146, 60, 0.2);
+  --nav-active-bg: rgba(251, 146, 60, 0.14);
+  --bg-shift-1: #0c0504;
+  --bg-shift-2: #1a0c08;
+  --bg-shift-3: #3b1508;
+  --bg-shift-4: #451a03;
+  --orb-1: rgba(251, 146, 60, 0.26);
+  --orb-2: rgba(249, 115, 22, 0.2);
+  --orb-3: rgba(251, 191, 36, 0.18);
+  --orb-blend: screen;
+  --link-border: rgba(251, 191, 36, 0.55);
+  --link-bg: rgba(251, 146, 60, 0.12);
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+}

@@ -1,0 +1,12 @@
+{
+  "name": "crewhub",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "npx --yes vercel@latest dev"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "firebase-admin": "^12.7.0"
+  }
+}

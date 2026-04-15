@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Admin · CrewHub</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <script>
+      (function () {
+        try {
+          var k = "crewhub-theme";
+          var ok = { ocean: 1, midnight: 1, orange: 1 };
+          var t = localStorage.getItem(k);
+          document.documentElement.dataset.theme = ok[t] ? t : "midnight";
+        } catch (e) {
+          document.documentElement.dataset.theme = "midnight";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-stage" aria-hidden="true">
+      <div class="bg-gradient"></div>
+      <div class="bg-orbs">
+        <span class="orb orb--1"></span>
+        <span class="orb orb--2"></span>
+        <span class="orb orb--3"></span>
+      </div>
+    </div>
+
+    <header class="app-header glass">
+      <div class="brand">
+        <a href="index.html" class="header-home-link glass-inner">Home</a>
+        <h1 class="brand-title">CrewHub</h1>
+      </div>
+      <div class="theme-settings-header">
+        <button
+          type="button"
+          id="crewhub-theme-open"
+          class="theme-settings-btn glass-inner"
+          aria-haspopup="dialog"
+          aria-controls="crewhub-theme-dialog"
+          aria-expanded="false"
+          title="Theme settings"
+        >
+          <svg class="theme-settings-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46a.5.5 0 00-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0014 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1a.499.499 0 00-.61.22l-2 3.46c-.12.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.22.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"
+            />
+          </svg>
+          <span class="sr-only">Theme settings</span>
+        </button>
+      </div>
+    </header>
+
+    <dialog id="crewhub-theme-dialog" class="theme-dialog" aria-labelledby="crewhub-theme-dialog-title">
+      <div class="theme-dialog-surface glass">
+        <div class="theme-dialog-head">
+          <h2 id="crewhub-theme-dialog-title" class="theme-dialog-title">Theme</h2>
+          <button type="button" class="theme-dialog-close" id="crewhub-theme-dialog-close" aria-label="Close">×</button>
+        </div>
+        <p class="theme-dialog-hint">Pick a look for CrewHub. Your choice is saved on this device.</p>
+        <div
+          id="crewhub-theme-picker"
+          class="theme-seg-group theme-seg-group--stacked"
+          role="radiogroup"
+          aria-labelledby="crewhub-theme-dialog-title"
+        >
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="midnight" aria-checked="true">Midnight</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="ocean" aria-checked="false">Ocean</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="orange" aria-checked="false">Amber</button>
+        </div>
+        <div class="theme-dialog-actions">
+          <button type="button" class="btn btn-primary theme-dialog-done" id="crewhub-theme-done">Done</button>
+        </div>
+      </div>
+    </dialog>
+
+    <main class="app-main">
+      <p id="authStatus" class="status-line" role="status"></p>
+
+      <section id="adminAuthGate" class="view glass panel admin-auth-gate">
+        <h2 class="panel-title">Admin sign in</h2>
+        <p class="panel-hint">
+          Sign in with <strong>Google</strong>. Serve this page over <strong>http://</strong> or <strong>https://</strong> (not <code>file://</code>). In Firebase Console →
+          Authentication → Settings, add your host under <strong>Authorized domains</strong> (e.g. <code>localhost</code>). Only UIDs in <code>js/admin-owner.js</code> /
+          <code>firestore.rules</code> can open the admin dashboard.
+        </p>
+        <button type="button" class="btn btn-google btn-massive" id="btnAdminGoogleSignIn">Sign in with Google</button>
+        <p class="panel-hint admin-oauth-alt">
+          If the pop-up is blocked, try
+          <button type="button" class="link-btn" id="btnAdminGoogleRedirect">full-page sign-in (redirect)</button>
+          instead.
+        </p>
+        <p id="adminAuthError" class="login-message" role="alert" aria-live="assertive"></p>
+      </section>
+
+      <section id="view-admin" class="view glass panel is-hidden" hidden>
+        <div class="admin-signed-in-bar glass-inner">
+          <span id="adminSignedInEmail" class="admin-signed-in-email"></span>
+          <button type="button" class="link-btn" id="btnAdminSignOut">Sign out</button>
+        </div>
+        <h2 class="panel-title">Engineer / Admin</h2>
+
+        <div class="admin-tabs" role="tablist">
+          <button type="button" class="tab-btn is-active" role="tab" aria-selected="true" data-admin-tab="timesheets">Timesheets</button>
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-admin-tab="claims">Diesel claims</button>
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-admin-tab="roster">Worker roster</button>
+        </div>
+
+        <div id="adminTimesheets" class="admin-pane">
+          <div class="table-wrap glass-inner">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Worker</th>
+                  <th>Site</th>
+                  <th>Employee ID</th>
+                  <th>Clock in</th>
+                  <th>Clock out</th>
+                  <th>Meal</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="timesheetRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="adminClaims" class="admin-pane is-hidden" hidden>
+          <div class="table-wrap glass-inner">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Driver</th>
+                  <th>Employee ID</th>
+                  <th>Destination</th>
+                  <th>Mileage</th>
+                  <th>Receipt</th>
+                  <th>Meter</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="claimRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="adminRoster" class="admin-pane is-hidden" hidden>
+          <form id="rosterForm" class="glass-inner roster-form">
+            <label class="field-label" for="rosterEmployeeId">Employee / phone ID (document key)</label>
+            <input id="rosterEmployeeId" class="input input-xl" type="text" maxlength="64" />
+
+            <label class="field-label" for="rosterWorkerName">Worker display name</label>
+            <input id="rosterWorkerName" class="input input-xl" type="text" maxlength="120" />
+
+            <label class="field-label" for="rosterPin">6-digit PIN</label>
+            <input id="rosterPin" class="input input-xl" type="password" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" />
+
+            <button type="submit" class="btn btn-primary btn-massive" id="btnRosterSave">Save worker</button>
+          </form>
+          <p id="rosterMessage" class="message" role="status"></p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      try {
+        var _crewhubApi = localStorage.getItem("crewhub_api_origin");
+        if (_crewhubApi) window.__CREWHUB_API_ORIGIN__ = String(_crewhubApi).replace(/\/$/, "");
+      } catch (e) {}
+    </script>
+    <script type="module" src="js/admin-page.js"></script>
+  </body>
+</html>

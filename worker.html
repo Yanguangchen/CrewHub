@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Daily Attendance · CrewHub</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <script>
+      (function () {
+        try {
+          var k = "crewhub-theme";
+          var ok = { ocean: 1, midnight: 1, orange: 1 };
+          var t = localStorage.getItem(k);
+          document.documentElement.dataset.theme = ok[t] ? t : "midnight";
+        } catch (e) {
+          document.documentElement.dataset.theme = "midnight";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-stage" aria-hidden="true">
+      <div class="bg-gradient"></div>
+      <div class="bg-orbs">
+        <span class="orb orb--1"></span>
+        <span class="orb orb--2"></span>
+        <span class="orb orb--3"></span>
+      </div>
+    </div>
+
+    <header class="app-header glass">
+      <div class="brand">
+        <a href="index.html" class="header-home-link glass-inner">Home</a>
+        <h1 class="brand-title">CrewHub</h1>
+      </div>
+      <div class="theme-settings-header">
+        <button
+          type="button"
+          id="crewhub-theme-open"
+          class="theme-settings-btn glass-inner"
+          aria-haspopup="dialog"
+          aria-controls="crewhub-theme-dialog"
+          aria-expanded="false"
+          title="Theme settings"
+        >
+          <svg class="theme-settings-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46a.5.5 0 00-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0014 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1a.499.499 0 00-.61.22l-2 3.46c-.12.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.22.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"
+            />
+          </svg>
+          <span class="sr-only">Theme settings</span>
+        </button>
+      </div>
+    </header>
+
+    <dialog id="crewhub-theme-dialog" class="theme-dialog" aria-labelledby="crewhub-theme-dialog-title">
+      <div class="theme-dialog-surface glass">
+        <div class="theme-dialog-head">
+          <h2 id="crewhub-theme-dialog-title" class="theme-dialog-title">Theme</h2>
+          <button type="button" class="theme-dialog-close" id="crewhub-theme-dialog-close" aria-label="Close">×</button>
+        </div>
+        <p class="theme-dialog-hint">Pick a look for CrewHub. Your choice is saved on this device.</p>
+        <div
+          id="crewhub-theme-picker"
+          class="theme-seg-group theme-seg-group--stacked"
+          role="radiogroup"
+          aria-labelledby="crewhub-theme-dialog-title"
+        >
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="midnight" aria-checked="true">Midnight</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="ocean" aria-checked="false">Ocean</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="orange" aria-checked="false">Amber</button>
+        </div>
+        <div class="theme-dialog-actions">
+          <button type="button" class="btn btn-primary theme-dialog-done" id="crewhub-theme-done">Done</button>
+        </div>
+      </div>
+    </dialog>
+
+    <main class="app-main">
+      <p id="authStatus" class="status-line" role="status"></p>
+
+      <!-- Step 1 of 3: job site only (one screen at a time) -->
+      <section id="workerSiteScreen" class="view glass panel worker-site-panel">
+        <p class="worker-wizard-meta" aria-hidden="true">Step 1 of 3</p>
+        <h2 class="panel-title worker-atm-title">Current job site</h2>
+
+        <div class="attendance-site-block">
+          <label class="field-label field-label-site" for="wizardSiteName">Select Current Job Site</label>
+          <select id="wizardSiteName" class="input input-xl input-site-select" required>
+            <option value="" disabled selected>Select a job site</option>
+            <option>Site A - Bukit Batok</option>
+            <option>Site B - Jurong West</option>
+            <option>HQ Office</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-login-submit" id="btnWorkerSiteNext">
+          <span class="btn-login-text-primary">Continue</span>
+          <span class="btn-login-text-secondary" lang="bn">পরবর্তী</span>
+        </button>
+        <p id="workerSiteMessage" class="login-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- Step 2 of 3: ATM-style credentials (no worker name picker) -->
+      <section id="workerLoginScreen" class="view glass panel worker-atm-panel is-hidden" hidden>
+        <p class="worker-wizard-meta" aria-hidden="true">Step 2 of 3</p>
+        <h2 class="panel-title worker-atm-title">Sign in</h2>
+        <p class="panel-hint worker-atm-hint">Enter the phone number or employee ID and PIN issued by your administrator.</p>
+
+        <form id="workerAtmLoginForm" class="login-form" novalidate>
+          <div class="login-field">
+            <label class="login-label" for="atmEmployeeId">Phone Number or Employee ID</label>
+            <input
+              id="atmEmployeeId"
+              name="employeeId"
+              type="text"
+              class="input input-xl input-atm-mega"
+              placeholder="ফোন নম্বর"
+              autocomplete="username"
+              maxlength="64"
+            />
+          </div>
+          <div class="login-field">
+            <label class="login-label" for="atmPin">6-Digit PIN</label>
+            <input
+              id="atmPin"
+              name="pin"
+              type="password"
+              class="input input-login-pin"
+              inputmode="numeric"
+              maxlength="6"
+              minlength="6"
+              autocomplete="current-password"
+              pattern="[0-9]{6}"
+              title="Exactly 6 digits"
+              aria-describedby="atmPinHelperEn atmPinHelperBn"
+            />
+            <p id="atmPinHelperEn" class="login-helper-en">
+              Use your Date of Birth (DDMMYY) or last 6 digits of Work Permit.
+            </p>
+            <p id="atmPinHelperBn" class="login-helper-bn" lang="bn">
+              জন্ম তারিখ (DDMMYY) বা ওয়ার্ক পারমিটের শেষ ৬ সংখ্যা
+            </p>
+          </div>
+          <button type="submit" class="btn btn-login-submit" id="btnWorkerSecureLogin">
+            <span class="btn-login-text-primary">Secure Login</span>
+            <span class="btn-login-text-secondary" lang="bn">লগইন</span>
+          </button>
+        </form>
+        <p id="workerLoginMessage" class="login-message" role="status" aria-live="polite"></p>
+        <button type="button" class="link-btn worker-wizard-back" id="btnWorkerBackToSite">← Change job site</button>
+      </section>
+
+      <!-- Step 3 of 3: clock in / out (site was chosen in step 1) -->
+      <section id="workerClockScreen" class="view glass panel worker-clock-panel is-hidden" hidden>
+        <p class="worker-wizard-meta" aria-hidden="true">Step 3 of 3</p>
+        <div class="worker-clock-head">
+          <p class="worker-welcome" id="workerWelcomeLine">
+            Welcome, <strong id="workerWelcomeName"></strong>
+          </p>
+          <button type="button" class="link-btn worker-signout" id="btnWorkerSignOut">Sign out</button>
+        </div>
+
+        <p id="workerShiftStatus" class="worker-shift-status glass-inner" role="status" aria-live="polite">Status: Not Clocked In</p>
+
+        <div class="worker-display-site glass-inner" aria-live="polite">
+          <span class="worker-display-site-label">Job site</span>
+          <strong id="workerDisplaySite" class="worker-display-site-value"></strong>
+        </div>
+        <button type="button" class="link-btn worker-change-site-link" id="btnWorkerChangeSite" hidden>
+          Change job site
+        </button>
+
+        <div class="btn-stack attendance-clock-stack">
+          <button type="button" id="btnClockIn" class="btn btn-clock-in-massive">
+            <span class="btn-bilingual-main">Clock In</span>
+          </button>
+          <button type="button" id="btnClockOut" class="btn btn-clock-out-massive" disabled>
+            <span class="btn-bilingual-main">Clock Out</span>
+          </button>
+        </div>
+
+        <button type="button" id="btnCancelClockIn" class="btn btn-secondary btn-compact attendance-undo" disabled>
+          Undo mistaken clock-in
+        </button>
+
+        <p id="workerCooldownHint" class="worker-cooldown-hint" hidden></p>
+
+        <div id="mealWrap" class="meal-wrap meal-wrap--off glass" hidden aria-hidden="true">
+          <button type="button" id="mealRegisterBtn" class="btn btn-secondary btn-massive" disabled>
+            Register meal taken
+          </button>
+          <p class="meal-note">Shown only after a clock-out past 7:00 PM local time.</p>
+        </div>
+
+        <p id="workerMessage" class="message attendance-feedback" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <!--
+      /api/login: use `npm run preview` (vercel dev) or your deployed Vercel URL.
+      Local: copy `.env.example` → `.env.local` with FIREBASE_* + SESSION_SECRET (or `vercel env pull`), then `npm run preview`.
+    -->
+    <script>
+      try {
+        var _crewhubApi = localStorage.getItem("crewhub_api_origin");
+        if (_crewhubApi) window.__CREWHUB_API_ORIGIN__ = String(_crewhubApi).replace(/\/$/, "");
+      } catch (e) {}
+    </script>
+    <script type="module" src="js/worker-page.js"></script>
+  </body>
+</html>

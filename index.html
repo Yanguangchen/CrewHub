@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>CrewHub</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <script>
+      (function () {
+        try {
+          var k = "crewhub-theme";
+          var ok = { ocean: 1, midnight: 1, orange: 1 };
+          var t = localStorage.getItem(k);
+          document.documentElement.dataset.theme = ok[t] ? t : "midnight";
+        } catch (e) {
+          document.documentElement.dataset.theme = "midnight";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-stage" aria-hidden="true">
+      <div class="bg-gradient"></div>
+      <div class="bg-orbs">
+        <span class="orb orb--1"></span>
+        <span class="orb orb--2"></span>
+        <span class="orb orb--3"></span>
+      </div>
+    </div>
+
+    <header class="app-header glass">
+      <div class="brand">
+        <h1 class="brand-title">CrewHub</h1>
+      </div>
+      <div class="theme-settings-header">
+        <button
+          type="button"
+          id="crewhub-theme-open"
+          class="theme-settings-btn glass-inner"
+          aria-haspopup="dialog"
+          aria-controls="crewhub-theme-dialog"
+          aria-expanded="false"
+          title="Theme settings"
+        >
+          <svg class="theme-settings-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46a.5.5 0 00-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0014 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1a.499.499 0 00-.61.22l-2 3.46c-.12.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.22.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"
+            />
+          </svg>
+          <span class="sr-only">Theme settings</span>
+        </button>
+      </div>
+    </header>
+
+    <dialog id="crewhub-theme-dialog" class="theme-dialog" aria-labelledby="crewhub-theme-dialog-title">
+      <div class="theme-dialog-surface glass">
+        <div class="theme-dialog-head">
+          <h2 id="crewhub-theme-dialog-title" class="theme-dialog-title">Theme</h2>
+          <button type="button" class="theme-dialog-close" id="crewhub-theme-dialog-close" aria-label="Close">×</button>
+        </div>
+        <p class="theme-dialog-hint">Pick a look for CrewHub. Your choice is saved on this device.</p>
+        <div
+          id="crewhub-theme-picker"
+          class="theme-seg-group theme-seg-group--stacked"
+          role="radiogroup"
+          aria-labelledby="crewhub-theme-dialog-title"
+        >
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="midnight" aria-checked="true">Midnight</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="ocean" aria-checked="false">Ocean</button>
+          <button type="button" class="theme-seg-btn" role="radio" data-theme="orange" aria-checked="false">Amber</button>
+        </div>
+        <div class="theme-dialog-actions">
+          <button type="button" class="btn btn-primary theme-dialog-done" id="crewhub-theme-done">Done</button>
+        </div>
+      </div>
+    </dialog>
+
+    <main class="app-main app-main--hub">
+      <section class="view glass panel hub-panel login-panel">
+        <h2 class="panel-title">Welcome</h2>
+
+        <div class="hub-links hub-links--primary">
+          <a href="worker.html" class="btn btn-secondary btn-massive">Worker portal</a>
+          <a href="driver.html" class="btn btn-secondary btn-massive">Driver portal</a>
+          <a href="admin.html" class="btn btn-secondary btn-massive">Admin dashboard</a>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/index-page.js"></script>
+  </body>
+</html>

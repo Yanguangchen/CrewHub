@@ -1,0 +1,305 @@
+/**
+ * App shell: animated background stage, orbs, header, main.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--text);
+}
+
+body {
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.45;
+}
+
+/* Fixed background stage: mesh + glow orbs */
+.bg-stage {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(125deg, var(--bg-shift-1), var(--bg-shift-2), var(--bg-shift-3), var(--bg-shift-4));
+  background-size: 320% 320%;
+  animation: bgMeshDrift 38s ease-in-out infinite alternate;
+}
+
+.bg-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.45;
+  background: radial-gradient(55% 48% at 18% 22%, color-mix(in srgb, var(--orb-1) 38%, transparent), transparent 58%),
+    radial-gradient(50% 44% at 82% 28%, color-mix(in srgb, var(--orb-2) 34%, transparent), transparent 55%),
+    radial-gradient(52% 52% at 48% 88%, color-mix(in srgb, var(--orb-3) 30%, transparent), transparent 56%);
+  animation: bgGlowPulse 26s ease-in-out infinite alternate;
+}
+
+.bg-orbs {
+  position: absolute;
+  inset: -12%;
+  z-index: 2;
+  filter: blur(64px);
+  opacity: 0.55;
+  mix-blend-mode: var(--orb-blend, screen);
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.orb--1 {
+  width: min(72vw, 520px);
+  height: min(72vw, 520px);
+  left: -8%;
+  top: 2%;
+  background: radial-gradient(circle at 38% 36%, var(--orb-1), transparent 68%);
+  animation-name: orb1;
+  animation-duration: 24s;
+}
+
+.orb--2 {
+  width: min(58vw, 440px);
+  height: min(58vw, 440px);
+  right: -6%;
+  top: 18%;
+  background: radial-gradient(circle at 42% 40%, var(--orb-2), transparent 70%);
+  animation-name: orb2;
+  animation-duration: 31s;
+  animation-delay: -4s;
+}
+
+.orb--3 {
+  width: min(85vw, 600px);
+  height: min(85vw, 600px);
+  left: 18%;
+  bottom: -22%;
+  background: radial-gradient(circle at 50% 42%, var(--orb-3), transparent 72%);
+  animation-name: orb3;
+  animation-duration: 28s;
+  animation-delay: -9s;
+}
+
+@keyframes bgMeshDrift {
+  0% {
+    background-position: 0% 38%;
+  }
+  100% {
+    background-position: 100% 62%;
+  }
+}
+
+@keyframes bgGlowPulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0.55;
+    transform: scale(1.03) rotate(1deg);
+  }
+}
+
+@keyframes orb1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(12%, 8%) scale(1.12);
+    opacity: 0.62;
+  }
+}
+
+@keyframes orb2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate(-10%, 14%) scale(1);
+    opacity: 0.58;
+  }
+}
+
+@keyframes orb3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.44;
+  }
+  50% {
+    transform: translate(-6%, -10%) scale(1.08);
+    opacity: 0.6;
+  }
+}
+
+.app-header {
+  margin: 12px clamp(12px, 3vw, 28px) 0;
+  padding: 14px clamp(14px, 3vw, 22px);
+  border-radius: var(--radius);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "brand theme";
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 0;
+}
+
+.brand {
+  grid-area: brand;
+  justify-self: start;
+  align-self: center;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-home-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--glass-border);
+}
+
+.header-home-link:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--glass-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.theme-settings-header {
+  grid-area: theme;
+  justify-self: end;
+  align-self: center;
+  width: auto;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px clamp(12px, 3vw, 28px) max(32px, env(safe-area-inset-bottom, 0px)) clamp(12px, 3vw, 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Home hub: symmetric padding (login landing); center the panel in the viewport */
+.app-main--hub {
+  padding: 12px clamp(12px, 3vw, 28px) 32px clamp(12px, 3vw, 28px);
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100dvh - 96px);
+}
+
+.hub-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.hub-links a.btn {
+  text-align: center;
+  text-decoration: none;
+}
+
+.status-line {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Extra air below status / above the active portal (Worker is default) */
+#view-worker,
+#view-driver,
+#view-admin {
+  margin-top: 10px;
+}
+
+.admin-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 900px) {
+  .app-main {
+    max-width: 1100px;
+  }
+
+  .app-header {
+    column-gap: 20px;
+    row-gap: 12px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .app-header {
+    grid-template-columns: auto minmax(200px, 1fr);
+    grid-template-areas: "brand theme";
+  }
+
+  .theme-settings-header {
+    width: auto;
+    max-width: none;
+    justify-self: end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-gradient,
+  .bg-gradient::after,
+  .orb {
+    animation: none !important;
+  }
+
+  .nav-btn,
+  .btn,
+  .upload-zone,
+  .link-btn,
+  .view.glass.panel {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,177 @@
+/**
+ * Home login: oversized ID + PIN + bilingual submit.
+ */
+
+.login-panel {
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+/* Home hub: a bit wider; column centered; portal buttons use full width and wrap labels */
+.hub-panel.login-panel {
+  max-width: min(640px, calc(100vw - 24px));
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  text-align: center;
+}
+
+.hub-panel.login-panel .panel-title {
+  text-align: center;
+  align-self: center;
+  width: 100%;
+}
+
+.hub-panel.login-panel .hub-links {
+  width: 100%;
+  align-self: stretch;
+}
+
+.hub-panel.login-panel .hub-links a.btn {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  padding-inline: clamp(14px, 4vw, 24px);
+  line-height: 1.28;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.login-field {
+  margin-bottom: 0;
+}
+
+.login-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 22px 0 10px;
+}
+
+.login-field:first-of-type .login-label {
+  margin-top: 4px;
+}
+
+.input-login-mega {
+  min-height: 88px;
+  font-size: clamp(1.2rem, 4.5vw, 1.45rem);
+  padding: 20px 22px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.input-login-mega::placeholder {
+  color: color-mix(in srgb, var(--muted) 85%, transparent);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.input-login-pin {
+  min-height: 76px;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  padding: 18px 22px;
+  border-radius: 18px;
+  letter-spacing: clamp(0.12em, 1.8vw, 0.38em);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.login-helper-en {
+  margin: 12px 0 4px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.login-helper-bn {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--muted) 92%, var(--text));
+}
+
+.btn-login-submit {
+  width: 100%;
+  min-height: 84px;
+  margin-top: 28px;
+  padding: 18px 22px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--btn-primary-text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--btn-primary-from) 88%, #fff), var(--btn-primary-to));
+  box-shadow: 0 16px 44px var(--btn-primary-glow), 0 0 28px color-mix(in srgb, var(--accent) 42%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, rgba(255, 255, 255, 0.2));
+}
+
+.btn-login-submit:hover:not(:disabled) {
+  transform: var(--hover-lift);
+  filter: brightness(1.06);
+}
+
+.btn-login-text-primary {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.btn-login-text-secondary {
+  font-size: 1.05rem;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.login-message {
+  margin-top: 14px;
+  min-height: 1.2em;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.login-message.is-error {
+  color: #fb7185;
+}
+
+.hub-links--primary {
+  margin-top: 8px;
+}
+
+.hub-links--after-login {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hub-links--after-login .hub-links-title {
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-login-submit {
+    transition-duration: 0.01ms !important;
+  }
+}

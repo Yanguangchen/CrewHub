@@ -1,0 +1,9 @@
+/**
+ * Structural tokens only — colors live in themes.css per data-theme.
+ */
+:root {
+  --radius: 18px;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  --danger: #fb7185;
+  font-family: var(--font-sans);
+}
