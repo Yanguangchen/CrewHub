@@ -3,10 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preview": "npx --yes vercel@latest dev"
+    "preview": "npx --yes vercel@latest dev",
+    "vercel:prod": "vercel deploy --prod"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
     "firebase-admin": "^12.7.0"
+  },
+  "devDependencies": {
+    "vercel": "^47.2.2"
   }
 }
