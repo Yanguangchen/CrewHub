@@ -4,7 +4,7 @@
  * - May read/write `worker_credentials` and read `timesheets` / `fleet_claims` in Firestore (see firestore.rules)
  * - Worker/driver data changes go through `/api/*`; Storage `fleet_claims/**` is server-only
  *
- * Keep in sync with `CREWHUB_PRIMARY_ADMIN_UID` in `api/lib/adminAuth.js` and `isCrewOwner()` in `firestore.rules`.
+ * Keep in sync with `CREWHUB_PRIMARY_ADMIN_UID` in `server/lib/adminAuth.js` and `isCrewOwner()` in `firestore.rules`.
  * Add more UIDs here (and in rules + server) if you need additional admins.
  */
 export const CREWHUB_PRIMARY_ADMIN_UID = "aWzsqY6sT5SjVjMI1jJHs5rOddw1";

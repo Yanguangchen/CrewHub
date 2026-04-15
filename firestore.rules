@@ -6,7 +6,7 @@ service cloud.firestore {
      * Primary admin (Firebase Auth UID). Full admin privileges for this repo:
      * - Read `timesheets` / `fleet_claims` (dashboard).
      * - Read/write `worker_credentials` from trusted clients (admin roster tab).
-     * Sync with `CREWHUB_PRIMARY_ADMIN_UID` in js/admin-owner.js and api/lib/adminAuth.js.
+     * Sync with `CREWHUB_PRIMARY_ADMIN_UID` in js/admin-owner.js and server/lib/adminAuth.js.
      */
     function isCrewOwner() {
       return request.auth != null
