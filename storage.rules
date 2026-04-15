@@ -1,8 +1,11 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    /**
+     * Driver uploads use Admin SDK only. Deny all client access to this path.
+     */
     match /fleet_claims/{allPaths=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

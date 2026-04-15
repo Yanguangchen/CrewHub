@@ -1,45 +1,21 @@
+import { db, collection, onSnapshot, query, orderBy, COL_TIMESHEETS } from "./firebase-client.js";
 import {
-  db,
-  collection,
-  doc,
-  addDoc,
-  updateDoc,
-  getDoc,
-  getDocs,
-  deleteDoc,
-  onSnapshot,
-  query,
-  where,
-  orderBy,
-  Timestamp,
-  COL_TIMESHEETS,
-} from "./firebase-client.js";
-import { formatDateKey } from "./crewhub-helpers.js";
-
-function isStrictlyAfterSevenPM(date) {
-  const d = new Date(date);
-  const cutoff = new Date(d);
-  cutoff.setHours(19, 0, 0, 0);
-  return d.getTime() > cutoff.getTime();
-}
+  getTimesheetOpen,
+  postTimesheetClockOut,
+  postTimesheetMeal,
+  postTimesheetDeleteOpen,
+  postTimesheetAdminDelete,
+} from "./api-worker.js";
 
 /**
- * @param {{ workerName: string, siteName: string, clockInDate?: Date, employeeId?: string | null }} p
- * @returns {Promise<string>} new document id
+ * @param {{ workerName: string, siteName: string, dateKey: string }} p workerName is ignored; server uses session
+ * @returns {Promise<{ id: string, data: object } | null>}
  */
-export async function createTimesheet({ workerName, siteName, clockInDate = new Date(), employeeId = null }) {
-  const payload = {
-    workerName,
-    siteName,
-    clockInTime: Timestamp.fromDate(clockInDate),
-    clockOutTime: null,
-    claimedMeal: false,
-    date: formatDateKey(clockInDate),
-  };
-  const id = employeeId?.trim();
-  if (id) payload.employeeId = id;
-  const refDoc = await addDoc(collection(db, COL_TIMESHEETS), payload);
-  return refDoc.id;
+export async function findOpenTimesheetForDay({ siteName, dateKey }) {
+  if (!siteName || !dateKey) return null;
+  const res = await getTimesheetOpen(siteName, dateKey);
+  if (!res?.open || !res.timesheetId) return null;
+  return { id: res.timesheetId, data: res.data };
 }
 
 /**
@@ -48,15 +24,8 @@ export async function createTimesheet({ workerName, siteName, clockInDate = new 
  * @returns {Promise<{ eligibleForMeal: boolean }>}
  */
 export async function updateTimesheetClockOut(docId, clockOutDate = new Date()) {
-  const eligible = isStrictlyAfterSevenPM(clockOutDate);
-  const payload = {
-    clockOutTime: Timestamp.fromDate(clockOutDate),
-  };
-  if (!eligible) {
-    payload.claimedMeal = false;
-  }
-  await updateDoc(doc(db, COL_TIMESHEETS, docId), payload);
-  return { eligibleForMeal: eligible };
+  const data = await postTimesheetClockOut(docId, clockOutDate);
+  return { eligibleForMeal: !!data.eligibleForMeal };
 }
 
 /**
@@ -64,49 +33,26 @@ export async function updateTimesheetClockOut(docId, clockOutDate = new Date()) 
  * @param {boolean} claimedMeal
  */
 export async function updateTimesheetMealClaim(docId, claimedMeal) {
-  await updateDoc(doc(db, COL_TIMESHEETS, docId), { claimedMeal });
+  await postTimesheetMeal(docId, claimedMeal);
 }
 
 /**
  * @param {string} docId
+ * @param {string} idToken Google ID token (admin)
  */
-export async function deleteTimesheet(docId) {
-  await deleteDoc(doc(db, COL_TIMESHEETS, docId));
+export async function deleteTimesheet(docId, idToken) {
+  await postTimesheetAdminDelete(idToken, docId);
 }
 
 /**
- * Remove an open shift (no clock-out). Used by worker “Undo clock-in”.
+ * Remove an open shift (no clock-out). Worker session cookie required.
  * @param {string} docId
  */
 export async function deleteOpenTimesheet(docId) {
-  const snap = await getDoc(doc(db, COL_TIMESHEETS, docId));
-  if (!snap.exists()) {
-    throw new Error("Shift not found.");
-  }
-  const data = snap.data();
-  if (data.clockOutTime != null) {
-    throw new Error("This shift is already closed. Ask an admin to edit the record if needed.");
-  }
-  await deleteDoc(snap.ref);
+  await postTimesheetDeleteOpen(docId);
 }
 
-/**
- * Find today’s open timesheet for worker + site (clock-out still null).
- * @param {{ workerName: string, siteName: string, dateKey: string }} p
- * @returns {Promise<{ id: string, data: object } | null>}
- */
-export async function findOpenTimesheetForDay({ workerName, siteName, dateKey }) {
-  if (!workerName || !siteName || !dateKey) return null;
-  const q = query(collection(db, COL_TIMESHEETS), where("date", "==", dateKey));
-  const snap = await getDocs(q);
-  const match = snap.docs.find((d) => {
-    const x = d.data();
-    return x.workerName === workerName && x.siteName === siteName && x.clockOutTime == null;
-  });
-  return match ? { id: match.id, data: match.data() } : null;
-}
-
-/** Live list of timesheets, newest clock-in first. */
+/** Live list of timesheets, newest clock-in first (admin + Firestore rules). */
 export function subscribeTimesheets(onNext, onError) {
   const tq = query(collection(db, COL_TIMESHEETS), orderBy("clockInTime", "desc"));
   return onSnapshot(tq, onNext, onError);

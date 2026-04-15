@@ -3,8 +3,11 @@
  * Body: { employeeId, pin }
  * Verifies PIN in Firestore `worker_credentials/{normalizedId}`; `workerName` comes from the roster doc (admin-managed).
  */
+import { FieldValue } from "firebase-admin/firestore";
 import { getDb } from "./lib/firebaseAdmin.js";
 import { signWorkerSession, setWorkerCookie } from "./lib/sessionCookie.js";
+import { verifyPin, hashPin } from "./lib/pinHash.js";
+import { clientIp, isLoginBlocked, registerLoginFailure, clearLoginFailures } from "./lib/loginRateLimit.js";
 
 const COL = "worker_credentials";
 
@@ -47,20 +50,41 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid employeeId" });
   }
 
+  const rateKey = `${clientIp(req)}:${key}`;
+  const blocked = isLoginBlocked(rateKey);
+  if (blocked.blocked) {
+    res.setHeader("Retry-After", String(blocked.retryAfterSec || 60));
+    return res.status(429).json({ error: "Too many sign-in attempts. Try again later." });
+  }
+
   try {
     const snap = await getDb().collection(COL).doc(key).get();
     if (!snap.exists) {
+      registerLoginFailure(rateKey);
       return res.status(401).json({ error: "Unknown employee or wrong credentials" });
     }
     const data = snap.data() || {};
-    const expectedPin = String(data.pin || "");
-    if (expectedPin !== pin) {
+    const ok = await verifyPin(pin, data);
+    if (!ok) {
+      registerLoginFailure(rateKey);
       return res.status(401).json({ error: "Unknown employee or wrong credentials" });
     }
+
+    if (typeof data.pin === "string" && data.pin.length === 6 && !data.pinHash) {
+      try {
+        const pinHash = await hashPin(pin);
+        await snap.ref.set({ pinHash, pin: FieldValue.delete() }, { merge: true });
+      } catch (e) {
+        console.warn("login pin upgrade", e);
+      }
+    }
+
     const workerName = String(data.workerName || "").trim();
     if (!workerName) {
       return res.status(500).json({ error: "Roster record missing workerName; contact admin" });
     }
+
+    clearLoginFailures(rateKey);
 
     const token = signWorkerSession({
       employeeId: employeeIdRaw,

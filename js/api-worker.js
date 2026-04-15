@@ -93,16 +93,94 @@ export async function postClockIn(body) {
   return data;
 }
 
+/** @returns {Promise<{ open: boolean, timesheetId?: string, data?: object }>} */
+export async function getTimesheetOpen(siteName, dateKey) {
+  const params = new URLSearchParams({ siteName, date: dateKey });
+  const r = await fetch(`${apiOrigin()}/api/timesheet-open?${params.toString()}`, {
+    method: "GET",
+    credentials: "include",
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const hint = workerApiMissingHint(r.status);
+    throw new Error((data.error || data.message || `Open shift check failed (${r.status})`) + hint);
+  }
+  return data;
+}
+
+export async function postTimesheetClockOut(timesheetId, clockOutAt) {
+  const r = await fetch(`${apiOrigin()}/api/timesheet-clock-out`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ timesheetId, clockOutAt: clockOutAt instanceof Date ? clockOutAt.toISOString() : clockOutAt }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const hint = workerApiMissingHint(r.status);
+    throw new Error((data.error || data.message || `Clock-out failed (${r.status})`) + hint);
+  }
+  return data;
+}
+
+export async function postTimesheetMeal(timesheetId, claimedMeal) {
+  const r = await fetch(`${apiOrigin()}/api/timesheet-meal`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ timesheetId, claimedMeal }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const hint = workerApiMissingHint(r.status);
+    throw new Error((data.error || data.message || `Meal update failed (${r.status})`) + hint);
+  }
+  return data;
+}
+
+export async function postTimesheetDeleteOpen(timesheetId) {
+  const r = await fetch(`${apiOrigin()}/api/timesheet-delete-open`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ timesheetId }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const hint = workerApiMissingHint(r.status);
+    throw new Error((data.error || data.message || `Delete failed (${r.status})`) + hint);
+  }
+  return data;
+}
+
 /**
- * Server-side roster write (bypasses Firestore rules). Requires deployed `/api/roster-upsert` and `apiOrigin()`.
+ * @param {string} idToken Google ID token
+ * @param {string} timesheetId
+ */
+export async function postTimesheetAdminDelete(idToken, timesheetId) {
+  const origin = apiOrigin();
+  const r = await fetch(`${origin}/api/timesheet-admin-delete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ timesheetId }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    throw new Error(data.error || data.message || `Delete failed (${r.status})`);
+  }
+  return data;
+}
+
+/**
+ * Server-side roster write (hashes PIN; never stores plaintext). Same-origin uses relative `/api/...`.
  * @param {{ employeeId: string, workerName: string, pin: string }} body
  * @param {string} idToken Firebase ID token (Google admin)
  */
 export async function postRosterUpsert(body, idToken) {
   const origin = apiOrigin();
-  if (!origin) {
-    throw new Error("Set window.__CREWHUB_API_ORIGIN__ to your API base URL to save via server.");
-  }
   const r = await fetch(`${origin}/api/roster-upsert`, {
     method: "POST",
     headers: {

@@ -4,8 +4,10 @@
  * Body: { employeeId, workerName, pin }
  * Creates or updates `worker_credentials` (admin-only; workers cannot self-register via UI).
  */
+import { FieldValue } from "firebase-admin/firestore";
 import { getDb } from "./lib/firebaseAdmin.js";
 import { requireAdminFromRequest } from "./lib/adminAuth.js";
+import { hashPin } from "./lib/pinHash.js";
 
 const COL = "worker_credentials";
 
@@ -58,14 +60,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    await getDb().collection(COL).doc(key).set(
-      {
-        pin,
-        workerName,
-        employeeId: employeeIdRaw,
-      },
-      { merge: true }
-    );
+    const pinHash = await hashPin(pin);
+    await getDb()
+      .collection(COL)
+      .doc(key)
+      .set(
+        {
+          pinHash,
+          workerName,
+          employeeId: employeeIdRaw,
+          pin: FieldValue.delete(),
+        },
+        { merge: true }
+      );
     return res.status(200).json({ ok: true, id: key });
   } catch (e) {
     console.error("roster-upsert", e);

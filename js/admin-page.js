@@ -6,7 +6,6 @@ import {
   query,
   orderBy,
   COL_CLAIMS,
-  COL_WORKER_CREDENTIALS,
   isConfigReady,
   GoogleAuthProvider,
   signInWithPopup,
@@ -14,15 +13,13 @@ import {
   getRedirectResult,
   signOut,
   onAuthStateChanged,
-  doc,
-  setDoc,
 } from "./firebase-client.js";
 import { subscribeTimesheets, deleteTimesheet } from "./timesheets-crud.js";
 import { formatTs } from "./crewhub-helpers.js";
 import { initThemePicker, bindTabGroup, escapeHtml, attrSafe } from "./ui.js";
 import { sanitizePin } from "./crewhub-identity.js";
-import { isAdminOwnerUid, CREWHUB_PRIMARY_ADMIN_UID } from "./admin-owner.js";
-import { postRosterUpsert, apiOrigin } from "./api-worker.js";
+import { isAdminOwnerUid } from "./admin-owner.js";
+import { postRosterUpsert } from "./api-worker.js";
 
 initThemePicker();
 
@@ -222,8 +219,14 @@ timesheetRows?.addEventListener("click", async (e) => {
   const id = btn.getAttribute("data-timesheet-delete");
   if (!id) return;
   if (!confirm("Delete this timesheet permanently?")) return;
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Sign in again.");
+    return;
+  }
   try {
-    await deleteTimesheet(id);
+    const idToken = await user.getIdToken();
+    await deleteTimesheet(id, idToken);
   } catch (err) {
     console.error(err);
     alert(err?.message || "Delete failed.");
@@ -269,46 +272,15 @@ document.getElementById("rosterForm")?.addEventListener("submit", async (e) => {
     return;
   }
   setRosterMsg("Saving…");
-  const payload = { pin, workerName, employeeId: employeeIdRaw };
   try {
-    await setDoc(doc(db, COL_WORKER_CREDENTIALS, key), payload, { merge: true });
+    const idToken = await user.getIdToken();
+    await postRosterUpsert({ employeeId: employeeIdRaw, workerName, pin }, idToken);
     setRosterMsg("Worker saved.");
     const pinEl = document.getElementById("rosterPin");
     if (pinEl) pinEl.value = "";
   } catch (err) {
     console.error(err);
-    const perm =
-      err?.code === "permission-denied" ||
-      /Missing or insufficient permissions|insufficient permissions/i.test(String(err?.message || ""));
-    if (perm && apiOrigin()) {
-      try {
-        const idToken = await user.getIdToken();
-        await postRosterUpsert(
-          { employeeId: employeeIdRaw, workerName, pin },
-          idToken
-        );
-        setRosterMsg("Worker saved (via server API).");
-        const pinEl = document.getElementById("rosterPin");
-        if (pinEl) pinEl.value = "";
-        return;
-      } catch (apiErr) {
-        console.error(apiErr);
-        setRosterMsg(
-          `${apiErr?.message || "API save failed."} Firestore denied access and the API fallback failed.`,
-          true
-        );
-        return;
-      }
-    }
-    if (perm) {
-      setRosterMsg(
-        `Firestore blocked this save. Deploy the rules in firestore.rules (worker_credentials must allow your UID), or set window.__CREWHUB_API_ORIGIN__ to your Vercel URL for API fallback. ` +
-          `Your signed-in UID: ${user.uid}. It must match CREWHUB_PRIMARY_ADMIN_UID (${CREWHUB_PRIMARY_ADMIN_UID}) in js/admin-owner.js and isCrewOwner() in firestore.rules.`,
-        true
-      );
-      return;
-    }
-    setRosterMsg(err.message || "Save failed.", true);
+    setRosterMsg(err?.message || "Save failed. Use the same host as /api (e.g. Vercel or npm run preview).", true);
   }
 });
 
